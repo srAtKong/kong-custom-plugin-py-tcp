@@ -1,0 +1,39 @@
+_format_version: "2.1"
+_transform: true
+
+services:
+- name: example-service
+  url: http://httpbin.org
+  routes:
+  - name: example.route
+    paths:
+    - /echo
+- host: 45.79.112.203
+  name: tcpbin-echo
+  port: 4242
+  protocol: tcp
+  routes:
+  - name: test
+    protocols:
+    - tcp
+    sources:
+    - ip: 0.0.0.0/0
+
+plugins:
+- name: file-log
+  protocols:
+  - tcp
+  - http
+  - https
+  config:
+    path: /tmp/kong.log
+- name: py-hello
+  enabled: true
+  config:
+    message: YNWA
+  protocols:
+  - grpc
+  - grpcs
+  - http
+  - https
+  - tcp

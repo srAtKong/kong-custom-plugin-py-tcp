@@ -1,0 +1,52 @@
+version: "3.7"
+
+services:
+  kong:
+    image: kong-ee-2.7-py-tcp:latest
+    container_name: kong
+    restart: always
+    environment:
+      - TZ=${TZ:-Asia/Singapore}
+      - KONG_DATABASE=off #database=off for `dbless` mode
+      - KONG_DECLARATIVE_CONFIG=/opt/conf/dbless_config/kong-with-py.yaml
+      - KONG_PROXY_ACCESS_LOG=/dev/stdout
+      - KONG_ADMIN_ACCESS_LOG=/dev/stdout
+      - KONG_PROXY_ERROR_LOG=/dev/stderr
+      - KONG_ADMIN_ERROR_LOG=/dev/stderr
+      - KONG_PROXY_STREAM_ERROR_LOG=/dev/stderr  
+      - KONG_ADMIN_GUI_LISTEN=0.0.0.0:8002, 0.0.0.0:8445 ssl
+      - KONG_PORTAL_GUI_URL=http://localhost:8003
+      - KONG_ADMIN_GUI_URL=http://localhost:8002
+      - KONG_ADMIN_LISTEN=${KONG_ADMIN_LISTEN:-127.0.0.1:8001}
+      - KONG_PROXY_LISTEN=${KONG_PROXY_LISTEN:-0.0.0.0:8000, 0.0.0.0:8443 ssl http2}
+      - KONG_STREAM_LISTEN=0.0.0.0:5555
+      - KONG_VITALS=off
+      - KONG_NGINX_HTTP_RESOLVER=${KONG_NGINX_HTTP_RESOLVER:-8.8.8.8}
+      - KONG_LICENSE_DATA=${KONG_LICENSE_DATA}
+      - KONG_LOG_LEVEL=info
+      - KONG_PLUGINS=bundled,py-hello
+      - KONG_PLUGINSERVER_NAMES=go,py
+      - KONG_PLUGINSERVER_PY_SOCKET=/usr/local/kong/python_pluginserver.sock
+      - KONG_PLUGINSERVER_PY_START_CMD=/opt/kong-python-pdk/kong-pluginserver --plugins-directory /opt/conf/kong-py-plugins
+      - KONG_PLUGINSERVER_PY_QUERY_CMD=/opt/kong-python-pdk/kong-pluginserver --plugins-directory /opt/conf/kong-py-plugins --dump-all-plugins
+    volumes:
+      - ./kong-py-plugins:/opt/conf/kong-py-plugins
+      - ./dbless_config:/opt/conf/dbless_config
+    # working_dir: /opt/conf/kong-plugins
+    # command: sh -c "luarocks make --local && kong start -vv"
+    ports:
+      - 8000:8000
+      - 8001:8001
+      - 8002:8002
+      - 8003:8003
+      - 8004:8004
+      - 8443:8443
+      - 8444:8444
+      - 8445:8445
+      - 5555:5555
+    healthcheck:
+      test: ["CMD", "kong", "health"]
+      interval: 1s
+      timeout: 4s
+      retries: 5
+
