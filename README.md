@@ -19,7 +19,7 @@ image: <tag-name>
 
 ```code
 nc localhost 5555
-<enter a characted and it will be echoed back>
+<enter a character and it will be echoed back>
 ```
 
 You should see hello messages on the Kong logs emiited by the custom plugin
