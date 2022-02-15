@@ -9,10 +9,17 @@ A simple custom plugin for Kong using te python PDK - used with kong in the tcp-
 docker build -t <tag-name> .
 ```
 
-3. Update the docker-compose file with the image built
+2. Update the docker-compose file with the image built
 
 ```code
 image: <tag-name>
 ```
 
-5. Go!
+3. The declarative config file included creates a single service and route pointing to tcpbin. To test, run
+
+```code
+nc localhost 5555
+<enter a characted and it will be echoed back>
+```
+
+You should see hello messages on the Kong logs emiited by the custom plugin
