@@ -32,8 +32,6 @@ services:
     volumes:
       - ./kong-py-plugins:/opt/conf/kong-py-plugins
       - ./dbless_config:/opt/conf/dbless_config
-    # working_dir: /opt/conf/kong-plugins
-    # command: sh -c "luarocks make --local && kong start -vv"
     ports:
       - 8000:8000
       - 8001:8001
